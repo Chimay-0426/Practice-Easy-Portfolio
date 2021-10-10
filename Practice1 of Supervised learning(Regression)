@@ -1,0 +1,43 @@
+#回帰のモデルを決定係数で比較。
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+# 必要なモジュールを追記してください。
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import Ridge
+
+# データの読み込み
+concrete_data = pd.read_excel("https://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls")
+
+concrete_train_X, concrete_test_X, concrete_train_y, concrete_test_y = train_test_split(
+    concrete_data.drop('Concrete compressive strength(MPa, megapascals) ', axis=1),
+    concrete_data['Concrete compressive strength(MPa, megapascals) '], random_state=42)
+
+# 以下にコードを記述してください。
+max_score = 0
+best_model = ""
+# 線形回帰
+model = LinearRegression()
+model.fit(concrete_train_X, concrete_train_y)
+score = model.score(concrete_test_X, concrete_test_y)
+if max_score < score:
+    max_score = score
+    best_model = "線形回帰"
+# ラッソ回帰
+model = Lasso()
+model.fit(concrete_train_X, concrete_train_y)
+score = model.score(concrete_test_X, concrete_test_y)
+if max_score < score:
+    max_score = score
+    best_model = "ラッソ回帰"
+# リッジ回帰
+model = Ridge()
+model.fit(concrete_train_X, concrete_train_y)
+score = model.score(concrete_test_X, concrete_test_y)
+if max_score < score:
+    max_score = score
+    best_model = "リッジ回帰"
+    
+print("モデル:{}".format(best_model))
+print("決定係数:{}".format(max_score))
