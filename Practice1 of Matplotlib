@@ -1,0 +1,39 @@
+#The illustration of Mt Fuji/富士山の挿画
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 描画用の点を準備。
+x1 = np.linspace(-1, 1, 200)
+y1 = [x**4 - x**2 + 6 for x in x1]
+x2 = np.linspace(-8, -1, 700) 
+y2 = [12 / (abs(x) + 1) for x in x2]
+x3 = np.linspace(1, 8, 700)
+y3 = [12 / (abs(x) + 1) for x in x3]
+x4 = np.linspace(-2, 2, 400)
+y4 = [1/2 * math.cos(6*x) + 7/2 for x in x4]
+
+# figureオブジェクトの作成。
+fig = fig = plt.figure(figsize = (9, 6) )
+
+ax1 = ax1 = fig.add_subplot(2, 2, 1)
+ax1.plot(x1, y1)
+
+# axesオブジェクトを2行2列に分割し、右上に (x2,y2), (x3,y3) を重ねて描画。
+ax2 = fig.add_subplot(2, 2, 2)
+ax2.plot(x2, y2, color ="r")
+ax2.plot(x3, y3, color = "r")
+
+# axesオブジェクトを2行2列に分割し、左下に (x4,y4) を描画。
+ax3 = fig.add_subplot(2, 2, 3)
+ax3.plot(x4, y4, linestyle="--")
+
+# なお、グラフの色は全て青色。
+ax4 = fig.add_subplot(2, 2, 4)
+ax4.plot(x1, y1, color = "b" )
+ax4.plot(x2, y2, color = "b" )
+ax4.plot(x3, y3, color = "b" )
+ax4.plot(x4, y4, color = "b" )
+
+plt.show()
+
