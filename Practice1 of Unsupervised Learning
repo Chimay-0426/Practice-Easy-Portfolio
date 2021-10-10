@@ -1,0 +1,62 @@
+#Principal Components Ananysis/主成分分析
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
+
+# PCAクラスを定義します
+class PCA:
+    def __init__(self):
+           pass
+    
+    # 以下のfitメソッドを完成させてください
+    def fit(self, X, y):
+        # 引数X, yをインスタンス変数X, yに代入します
+        self.X = X
+        self.y = y
+        # 受け取ったデータXを標準化してください
+        X = (X - X.mean(axis=0) / X.std(axis=0))
+        # 標準化したデータの相関行列を計算してください
+        R = np.corrcoef(X.T)
+        # 相関行列を固有値分解し、固有値と固有ベクトルを求めてください
+        eigvals, eigvecs = np.linalg.eigh(R)
+        # 2次元に圧縮する特徴変換行列を作成してください
+        W = np.c_[eigvecs[:,-1], eigvecs[:,-2]]
+
+        # データXを特徴変換して得たデータをインスタンス変数dataに代入してください
+        self.data =X.dot(W)
+
+
+# 実験データを読み込み、DataFrameを作成します
+df = pd.read_csv("./Data_Cortex_Nuclear.csv")
+
+# 今回は使用しないタンパク質のデータである、21列目〜80列目を削除してください
+df = df.drop(df.columns[range(21, 81)], axis=1)
+
+# 今回使用するクラスのマウスは計29匹なので、29×15=435個のデータを用います
+# 435行目以降は使わないので、434行目までを抽出してください
+df = df.loc[range(0, 435)]
+
+# 欠損値nanを含む行をリストワイズ削除してください
+df = df.dropna()
+            
+# 0列目のMouseIDと目的変数であるclassを削除し、特徴量Xとして定義してくだい
+X = df.drop(["MouseID", "class"], axis =1)
+
+# 最終列のclassを抽出し、ラベルyとして定義してください
+y = df['class']
+
+# PCAクラスを用いてデータを分析してください
+pca = PCA()
+pca.fit(X, y)
+
+# 圧縮したデータを取得し、matplotlibで表示してください
+X_pca = pca.data
+colors = ["r", "g", "b"]
+
+for label, color in zip(y.unique(), colors):
+    # 横軸(第一引数)にはX_pcaの0列目を、縦軸(第二引数)にはX_pcaの1列目を表示します
+    plt.scatter(X_pca.loc[y == label, 0], X_pca.loc[y == label, 1],c=color, label=label)
+plt.legend()
+plt.show()
