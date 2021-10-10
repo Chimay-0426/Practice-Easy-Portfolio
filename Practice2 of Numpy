@@ -1,0 +1,48 @@
+# I find the difference of two images with Numpy. To make it easy, let them become determinants consisting of numbers from 0 to 5.
+#Numpyを通じて、二つの画像の差分を求める。処理のために、画像を0から5の行列として行う。
+import numpy as np
+
+# 乱数の初期化
+np.random.seed(0)
+
+# 指定された大きさの画像を乱数を用いて生成する関数
+# 仮引数mは画像の縦の大きさ、nは画像の横の大きさ。
+def make_image(m, n):
+    # m×n行列の各成分を0~5の値でランダムに満たしてください
+    image = np.random.randint(0, 5, (m, n))    
+    return image
+
+# 渡された行列の一部を変更する関数
+def change_matrix(matrix):
+    # 与えられた行列の形を取得し、shapeに代入。
+    shape = matrix.shape
+    
+    # 行列の各成分について、変更するかしないかをランダムに決めた上で
+    # 変更する場合は0~5のいずれかの整数にランダムに入れ替えてください
+    for s in range(shape[0]):
+      for m in range(shape[1]):
+        if np.random.randint(0, 2) == 1:
+
+          matrix[s][m] =  np.random.randint(0, 5)
+    
+    
+    
+    return matrix
+
+# ランダムに画像を作成
+image1 = make_image(3, 3)
+print(image1)
+
+# ランダムに変更を適用する
+image2 = change_matrix(np.copy(image1))
+print(image2)
+
+# image1とimage2の差分を計算し、image3に代入してください
+image3 = image2 - image1
+print(image3)
+
+# image3の各成分が絶対値である行列をもとめimage3に再代入してください
+image3 = np.abs(image3)
+
+# image3を出力
+print(image3)
