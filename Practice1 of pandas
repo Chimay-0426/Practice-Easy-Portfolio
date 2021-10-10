@@ -1,0 +1,26 @@
+import pandas as pd
+
+
+index = ["taro", "mike", "kana", "jun", "sachi"]
+columns = ["国語", "数学", "社会", "理科", "英語"]
+data = [[30, 45, 12, 45, 87], [65, 47, 83, 17, 58], [64, 63, 86, 57, 46, ], [38, 47, 62, 91, 63], [65, 36, 85, 94, 36]]
+df = pd.DataFrame(data, index=index, columns=columns)
+
+# dfの新しい列"体育"を追加。
+pe_column = pd.Series([56, 43, 73, 82, 62],  index=["taro", "mike", "kana", "jun", "sachi"])
+df["体育"] = pe_column
+print(df)
+print()
+
+# 数学を昇順で並び替え。
+df1 = df.sort_values(by="数学",  ascending=True)
+print(df1)
+print()
+
+# df1の各要素に5点を足してください
+df2 = df1 + 5
+print(df2)
+print()
+
+# dfの要約統計量のうち、"mean",  "max",  "min"を出力。
+print(df.describe().loc[["mean",  "max",  "min"]])
