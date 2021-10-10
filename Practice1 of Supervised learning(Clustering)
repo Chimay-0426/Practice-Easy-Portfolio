@@ -1,0 +1,108 @@
+%%time
+#上記%%timeは処理の時間を把握して、プリントする。
+
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
+import scipy.stats
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+import warnings
+
+warnings.filterwarnings('ignore')
+
+data = load_digits()
+train_X, test_X, train_y, test_y = train_test_split(
+    data.data, data.target, random_state=42)
+
+#以下グリッドサーチ。
+model_param_set_grid =  {
+    LogisticRegression(): {
+        "C": [10 ** i for i in range(-5, 5)],
+        "multi_class" : ["ovr", "multinational"],
+        "random_state": [42]
+    },
+    LinearSVC(): {
+        "C": [10 ** i for i in range(-5, 5)],
+        "multi_class" : ["ovr", "crammer_singer"],    
+        "random_state": [42]
+    },
+    SVC(): {
+        "kernel": ["linear", "poly", "rbf", "sigmoid"],
+        "C": [10 ** i for i in range(-5, 5)],
+         "decision_function_shape": ["ovr", "ovo"],
+        "random_state": [42]
+    },
+    DecisionTreeClassifier(): {
+        "max_depth": [i for i in range(1, 11)],
+        "random_state": [42]
+    },
+    RandomForestClassifier():{
+        "n_estimators": [i for i in range (1, 21)],
+        "max_depth": [i for i in range(1, 11)],
+         "random_state": [42]
+    },
+    KNeighborsClassifier():{
+        "n_neighbors":[i for i in range(1, 11)]
+    },
+    
+}
+
+
+#以下ランダムサーチ。      
+model_param_set_random = {
+    LogisticRegression(): {
+        "C": scipy.stats.uniform(0.00001, 1000),
+        "multi_class" : ["ovr", "multinational"],
+        "random_state": [42]
+    },
+    LinearSVC(): {
+        "C": scipy.stats.uniform(0.00001, 1000),
+        "multi_class" : ["ovr", "crammer_singer"],    
+        "random_state": [42]
+    },
+    SVC(): {
+        "kernel": ["linear", "poly", "rbf", "sigmoid"],
+        "C": scipy.stats.uniform(0.00001, 1000),
+         "decision_function_shape": ["ovr", "ovo"],
+        "random_state": [42]
+    },
+    DecisionTreeClassifier(): {
+        "max_depth": scipy.stats.uniform(0.00001, 1000),
+        "random_state": [42]
+    },
+    RandomForestClassifier():{
+        "n_estimators":scipy.stats.randint(1, 100),
+        "max_depth": scipy.stats.uniform(0.00001, 1000),
+         "random_state": [42]
+    },
+    KNeighborsClassifier():{
+        "n_neighbors":scipy.stats.randint(1, 100)
+    },
+    
+}
+
+max_score = 0
+best_model = None
+best_param = None
+
+for model, param in model_param_set_random.items():
+    clf = RandomizedSearchCV(model, param)
+    clf.fit(train_X, train_y)
+    pred_y = clf.predict(test_X)
+    score = f1_score(test_y, pred_y, average="micro")
+    # 最高評価更新時にモデルやパラメーターも更新
+    if max_score < score:
+        max_score = score
+        best_model = model.__class__.__name__
+        best_param = clf.best_params_
+        
+print("学習モデル:{},\nパラメーター:{}".format(best_model, best_param))
+# 最も成績のいいスコアを出力してください。
+print("ベストスコア:",max_score)
